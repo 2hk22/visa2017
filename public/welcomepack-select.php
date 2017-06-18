@@ -46,7 +46,7 @@
 <div class="bg-white animated fadeIn" style="min-height: 75vh">
     <div class="content content-boxed overflow-hidden">
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12 i6-nopad">
                 <div class="push-100-t">
                     <div class="text-center">
                         <h1 class="push-30-t">Greeting you with <br>Thailand Grand Sale</h1>

@@ -19,15 +19,7 @@
                     between: {
                             min: 1000,
                             max: 999999999,
-                            message: 'your purchase amount is not qualified'
-                    },
-                    notEmpty: {
-                        message: 'Please Fill Your Purchase Amount in THB'
-                    },
-                    numeric: {
-                            message: 'The value is not a number',
-                            thousandsSeparator: '',
-                            decimalSeparator: '.'
+                            message: "Your Purchase Amount Is'n Qualified"
                     }
                 }
             },
@@ -35,23 +27,17 @@
                 validators: {
                      stringLength: {
                         min: 1,
-                        max: 6, ////6digit
+                        max: 10, ////10digit
                         message: 'Please Fill Your Valid Aproval Code'
                     },
-                    notEmpty: {
-                        message: 'Please Fill Your Aproval Code'
-                    }
                 }
             },
             captcha: {
                 validators:{
                     stringLength: {
                         min: 4,
-                        max: 4, ////4digit
+                        max: 5, ////4digit
                         message: 'Please Fill Your Valid Captcha'
-                    },
-                    notEmpty: {
-                        message: 'Please Fill Your Captcha'
                     },
                     numeric: {
                         message: 'The value is not a number'

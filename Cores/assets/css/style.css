@@ -13,11 +13,9 @@ h3,h5{color: #1a1f5c;}
 .margin-00{margin: 0 !important;}
 .btn-full{}
 
-.capcha{color: #d26a5c;display: none;}
-.capcha.test{display: block;margin: 0;}
-.capcha-container{max-width: 300px;margin-bottom: -30px;}
-.g-recaptcha{display: inline-block;transform-origin: left top;-webkit-transform-origin: left top;width: 100% !important;}
-#recaptcha_area, #recaptcha_table{width: 100px !important;}
+.capcha-img{position: relative;top: -5px;margin-bottom: -5px;zoom: 1.125;border-radius: 3px;}
+.circle-container{border-radius: 50% !important;background: #283374;height: 100px;width: 100px;margin: 0 auto 15px;}
+.circle-img{width: 60% !important;height: initial;position: relative;top: 22%;}
 
 .visiblity-none{visibility:hidden;position: absolute;z-index: -1;}
 .none{display: none !important;}
@@ -48,7 +46,7 @@ label.admin-panael{color: #2c343f;}
 
 .redeem-gift-r .p-desc{margin: 10px 0 0;font-size: 12px;line-height: 1.2em;}
 
-.redeem-gift-term{text-align: left;margin: 0 0 15px;padding: 0;}
+.redeem-gift-term{text-align: left;margin: 0 0 15px;padding: 5px;}
 .redeem-gift-term ul{padding: 0 0 0 15px;font-size: 0.66em;}
 
 .modals{position: fixed;top: 0;left: 0;right: 0;text-align: center;background: rgba(26, 31, 92, 0.78);padding: 15px;z-index: 1000;height: 100vh;overflow: hidden;width: 100%;}

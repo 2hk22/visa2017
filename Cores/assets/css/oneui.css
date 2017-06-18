@@ -7297,7 +7297,7 @@ a.block.block-link-hover3:active {
   margin-bottom: 100px !important;
 }
 .push-100-t {
-  margin-top: 100px !important;
+  /* margin-top: 100px !important; */
 }
 .push-100-r {
   margin-right: 100px !important;

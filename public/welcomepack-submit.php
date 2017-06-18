@@ -139,14 +139,14 @@
                                                     <div class="form-group redeem-gift-btn">
                                                         <p class="p-desc"><br>More shopping experience.</p>
                                                         <a href="https://thailandgrandsale.co">
-                                                            <button class="btn btn-sm btn-block btn-primary btn-p-5">More</button>
+                                                            <button class="btn btn-sm btn-block btn-primary btn-p-5">See More</button>
                                                         </a>
                                                     </div>
                                         <?php } else {?>
                                                     <div class="form-group redeem-gift-btn" href="#myCarousel" data-slide="next">
                                                         <p class="p-desc">Please save your pack for redemption.</p>
                                                         <a href="">
-                                                            <button class="btn btn-sm btn-block btn-primary btn-p-5">Save Photo</button>
+                                                            <button class="btn btn-sm btn-block btn-primary btn-p-5">More Offer</button>
                                                         </a>
                                                     </div>
                                         <?php } ?>

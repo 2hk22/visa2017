@@ -1,5 +1,7 @@
 <?php include '../Cores/Settings.php'; ?>
 <?php include '../Cores/template/header_public.php' ?>
+<?php include 'captcha.php'; ?>
+
 
 <?php
     $db = Settings::database();
@@ -11,6 +13,7 @@
     }
     else
     {
+
         $sql = 'SELECT
                     *
                 FROM
@@ -27,6 +30,7 @@
             header('Location:oops.php', true, 302);
             exit;
         }
+
     }
 ?>
 
@@ -37,8 +41,8 @@
                 <div class="push-100-t">
                     <!-- Redeem Title -->
                     <div class="text-center">
-                        <h1 class="push-20-t">Register to the program</h1>
-                        <p class="push-10-t">for your chance to get reward</p>
+                        <h1 class="push-20-t">Use your Visa card and be rewarded.</h1>
+                        <p class="push-10-t">Simply register to get exclusive offer</p>
                     </div>
                     <!-- END Redeem Title -->
 
@@ -46,7 +50,7 @@
                     <form class="form-horizontal push-30-t" id="redeeem_form" action="redeem-submit.php" method="POST">
 
                         <div class="form-group">
-                            <label for="country">Resident Of Country</label>
+                            <label for="country">Country of residence</label>
                             <select class="form-control" id="country" name="country" required>
                                 <option value="">Please Select Country</option>
                                 <option value="Afganistan">Afghanistan</option>
@@ -310,15 +314,13 @@
                             <label for="merchant_code">Merchant Code</label>
                             <input class="form-control" type="text" id="merchant_code" name="merchant_code" value="<?php echo $_GET['merchant_code']; ?>" required readonly/>
                         </div>
-                        <div class="form-group text-center margin-0">
-                        <div class="capcha-container" style="padding:15px;margin:0 auto;">
-                            Enter Image Text
+                        <div class="form-group">
+                            <label for="merchant_code"><img src="<?php echo Captcha::createCaptcha(); ?>" class="capcha-img" /></label>
                             <input class="form-control" type="text" id="captcha" name="captcha" >
-                            <img src="captcha.php" /><br>
                         </div>
                         <div class="form-group">
                             <div class="row">
-                                <button class="btn btn-sm btn-block btn-primary" type="submit">Register</button>
+                                <button class="btn btn-sm btn-block btn-primary" type="submit">Get offer</button>
                             </div>
                         </div>
                     </form>
@@ -328,7 +330,11 @@
         </div>
     </div>
 </div>
-
+<script>
+$(document).ready(function(){
+    $('[data-toggle="captcha"]').tooltip(); 
+});
+</script>
 <script src="../Cores/validation/validate_redeem.js"></script>
 
 <?php include '../Cores/template/footer_public.php' ?>
