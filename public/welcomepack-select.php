@@ -3,32 +3,56 @@
 
 <?php
     $db = Settings::database();
+    function RemoveSimbols($var) {
+                $var = htmlentities($var, ENT_NOQUOTES, 'UTF-8');
+                $var = preg_replace('/[^\p{L}\p{N}\s]/u', '', $var);
+                return $var;
+    }
     try
     {
-        //google re capcha
+        if(isset($_POST["captcha"]) && $_POST["captcha"]!="" && $_SESSION["code"]==$_POST["captcha"])
+        {
+            $encode_captcha = htmlspecialchars($_POST["captcha"], ENT_QUOTES);
+            if($encode_captcha !== htmlspecialchars($encode_captcha) || $encode_captcha !== RemoveSimbols($_POST['captcha']))
+            {
+                header('Location:oops.php', true, 302);
+                exit;
+            }
+        }
+        else
+        {header('Location:oops.php', true, 302); exit;}
+        
         if(!empty($_POST))
         {
+            $encode_country = htmlspecialchars($_POST['country'], ENT_QUOTES);
+            
 
-            if($_POST['country'] == 'Thailand')
+            if($encode_country !== htmlspecialchars($encode_country) || $encode_country !== RemoveSimbols($_POST['country'])) // Detect Hacker
             {
-                header('Location: oops.php', true, 302);
-               exit;
-            }
-            if(isset($_COOKIE['already'])) {
-                header('Location: already.php', true, 302);
+                header('Location:oops.php', true, 302);
                 exit;
             }
             else
             {
-                //setcookie('already', 1, time() + (86400 * 30));
+                if($encode_country == 'Thailand')
+                {
+                    header('Location: oops.php', true, 302);
+                exit;
+                }
+                if(isset($_COOKIE['already'])) {
+                    header('Location: already.php', true, 302);
+                    exit;
+                }
+                else
+                {
+                    //setcookie('already', 1, time() + (86400 * 30));
 
-                $_SESSION['country'] = $_POST['country'];
+                    $_SESSION['country'] = $encode_country;
 
+                }
             }
-
             //header('Location: success.php', true, 302);
             //exit;
-
         }
         else
         {
@@ -111,5 +135,6 @@
     </div>
 </div>
 
+<script src="../Cores/validation/validate_wp_select.js"></script>
 
 <?php include '../Cores/template/footer_public.php' ?>

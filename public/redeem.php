@@ -1,5 +1,6 @@
 <?php include '../Cores/Settings.php'; ?>
 <?php include '../Cores/template/header_public.php' ?>
+<?php include 'captcha.php'; ?>
 
 <?php
     $db = Settings::database();
@@ -314,7 +315,7 @@
                         <div class="capcha-container" style="padding:15px;margin:0 auto;">
                             Enter Image Text
                             <input class="form-control" type="text" id="captcha" name="captcha" >
-                            <img src="captcha.php" /><br>
+                            <img src="<?php echo Captcha::createCaptcha(); ?>" /><br>
                         </div>
                         <div class="form-group">
                             <div class="row">

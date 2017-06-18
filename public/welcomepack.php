@@ -1,5 +1,6 @@
 <?php include '../Cores/Settings.php'; ?>
 <?php include '../Cores/template/header_public.php' ?>
+<?php include 'captcha.php'; ?>
 
 
 <div class="bg-white animated fadeIn" style="min-height: 75vh">
@@ -269,10 +270,10 @@
                             </select>
                         </div>
                         <div class="form-group text-center">
-                        <div class="captchaContainer capcha-container">
-                            <div id="recaptcha" class="g-recaptcha"></div>
-                            <small class="help-block capcha" id="frm-wp-result">Please Recapcha</small>
-                            </div>
+                        <div class="capcha-container" style="padding:15px;margin:0 auto;">
+                            Enter Image Text
+                            <input class="form-control" type="text" id="captcha" name="captcha" >
+                            <img src="<?php echo Captcha::createCaptcha(); ?>" /><br>
                         </div>
                         <div class="form-group margin-0">
                             <button class="btn btn-sm btn-block btn-primary" type="submit">Register</button>

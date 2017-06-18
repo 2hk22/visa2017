@@ -3,16 +3,29 @@
 
 <?php
     $db = Settings::database();
+    function RemoveSimbols($var) {
+                $var = htmlentities($var, ENT_NOQUOTES, 'UTF-8');
+                $var = preg_replace('/[^\p{L}\p{N}\s]/u', '', $var);
+                return $var;
+    }
     try
     {
         if(!empty($_SESSION['country']))
         {
-
                 if(!empty($_POST['wp_check'])) {
-
                     $wp_check = $_POST['wp_check'];
-                    $check = '"'.implode('", "',$wp_check).'"';
-
+                    for($i = 0; $i < sizeof($wp_check);$i++)
+                    {
+                        $encode_wp_check[$i] = htmlspecialchars($wp_check[$i], ENT_QUOTES);
+                        if($encode_wp_check[$i] !== htmlspecialchars($encode_wp_check[$i]) || $encode_wp_check[$i] !== RemoveSimbols($encode_wp_check[$i]))
+                        {
+                            header('Location:oops.php', true, 302);
+                            exit;
+                        }
+                        $check = '"'.implode('", "',$encode_wp_check).'"';
+                    }
+                    
+                    
                     $sql = 'SELECT
                                 *
                             FROM
@@ -61,6 +74,9 @@
 
                     }
                 }
+                else {
+                    header('Location:oops.php', true, 302); exit;
+                }
                 //Query Redeem List
                 $sql = "SELECT
                         *
@@ -108,7 +124,6 @@
                 <div class="push-100-t">
                     <div class="text-center">
                         <h1 class="push-20-t">Free WelcomePack</h1>
-
                             <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
                                 <div class="carousel-inner">
                             <?php

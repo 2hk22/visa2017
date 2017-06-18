@@ -13,6 +13,21 @@
                         message: 'Please Select Your Country'
                     }
                 }
+            },
+            captcha: {
+                validators:{
+                    stringLength: {
+                        min: 4,
+                        max: 4, ////4digit
+                        message: 'Please Fill Your Valid Captcha'
+                    },
+                    notEmpty: {
+                        message: 'Please Fill Your Captcha'
+                    },
+                    numeric: {
+                        message: 'The value is not a number'
+                    }
+                }
             }
 
            }

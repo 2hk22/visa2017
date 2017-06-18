@@ -11,13 +11,18 @@ jQuery(function(){
 
 <?php
     $db = Settings::database();
+    function RemoveSimbols($var) {
+                $var = htmlentities($var, ENT_NOQUOTES, 'UTF-8');
+                $var = preg_replace('/[^\p{L}\p{N}\s]/u', '', $var);
+                return $var;
+    }
 
     try
     {
         if(isset($_POST["captcha"]) && $_POST["captcha"]!="" && $_SESSION["code"]==$_POST["captcha"])
         {
             $encode_captcha = htmlspecialchars($_POST["captcha"], ENT_QUOTES);
-            if($encode_captcha !== htmlspecialchars($encode_captcha)) // Detect Fucking Hacker
+            if($encode_captcha !== htmlspecialchars($encode_captcha) || $encode_captcha !== RemoveSimbols($_POST['captcha'])) // Detect Fucking Hacker
             {
                 header('Location:oops.php', true, 302);
                 exit;
@@ -25,6 +30,7 @@ jQuery(function(){
         }
         else
         {header('Location:oops.php', true, 302); exit;}
+        
 
 
         if(!empty($_POST))
@@ -33,31 +39,29 @@ jQuery(function(){
             $encode_approval_code = htmlspecialchars($_POST['approval_code'], ENT_QUOTES);
             $encode_merchant_code = htmlspecialchars($_POST['merchant_code'], ENT_QUOTES);
             $encode_spending = htmlspecialchars($_POST['spending'], ENT_QUOTES);
-
             
 
-            
-            if($encode_country !== htmlspecialchars($encode_country)) // Detect Fucking Hacker
+            if($encode_country !== htmlspecialchars($encode_country) || $encode_country !== RemoveSimbols($_POST['country'])) // Detect Hacker
             {
                 header('Location:oops.php', true, 302);
                 exit;
             }
-            elseif($encode_approval_code !== htmlspecialchars($encode_approval_code))
+            elseif($encode_approval_code !== htmlspecialchars($encode_approval_code) || $encode_approval_code !== RemoveSimbols($_POST['approval_code']))
             {
                 header('Location:oops.php', true, 302);
                 exit;
             }
-            elseif($encode_merchant_code !== htmlspecialchars($encode_merchant_code))
+            elseif($encode_merchant_code !== htmlspecialchars($encode_merchant_code) || $encode_merchant_code !== RemoveSimbols($_POST['merchant_code']))
             {
                 header('Location:oops.php', true, 302);
                 exit;
             }
-            elseif($encode_spending !== htmlspecialchars($encode_spending))
+            elseif($encode_spending !== htmlspecialchars($encode_spending) || $encode_spending !== RemoveSimbols($_POST['spending']))
             {
                 header('Location:oops.php', true, 302);
                 exit;
             }
-            else // Form is collected,Thank For Post
+            else // Form is collected,Thank For your Post
                 {
                 if($encode_country == 'Thailand')
                 {
