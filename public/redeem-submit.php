@@ -11,16 +11,22 @@ jQuery(function(){
 
 <?php
     $db = Settings::database();
+    function RemoveSimbols($var) {
+                $var = htmlentities($var, ENT_NOQUOTES, 'UTF-8');
+                $var = preg_replace('/[^\p{L}\p{N}\s]/u', '', $var);
+                return $var;
+    }
 
     try
     {
         if(isset($_POST["captcha"]) && $_POST["captcha"]!="" && $_SESSION["code"]==$_POST["captcha"])
         {
             $encode_captcha = htmlspecialchars($_POST["captcha"], ENT_QUOTES);
-            if($encode_captcha !== htmlspecialchars($encode_captcha)) // Detect Fucking Hacker
+            if($encode_captcha !== htmlspecialchars($encode_captcha) || $encode_captcha !== RemoveSimbols($_POST['captcha'])) // Detect Fucking Hacker
             {
                 header('Location:oops.php', true, 302);
                 exit;
+
             }else{
 
                 if(!empty($_POST))
@@ -55,7 +61,7 @@ jQuery(function(){
                         {
                         if($encode_country == 'Thailand')
                         {
-                            header('Location:oops.php', true, 302);
+                            header('Location:winprize.php', true, 302);
                             exit;
                         }
                         elseif($encode_merchant_code === null)

@@ -2,7 +2,6 @@
 <?php include '../Cores/template/header_public.php' ?>
 <?php include 'captcha.php'; ?>
 
-
 <?php
     $db = Settings::database();
 
@@ -34,7 +33,7 @@
     }
 ?>
 
- <div class="bg-white animated fadeIn">
+<div class="bg-white animated fadeIn">
     <div class="content content-boxed overflow-hidden">
         <div class="row">
             <div class="col-sm-12 col-md-8 col-md-offset-2">

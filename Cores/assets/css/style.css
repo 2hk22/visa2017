@@ -64,12 +64,7 @@ table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, 
 .popover-wp{display: inline-block;width: 25px;height: 25px;padding: 0 3.5px;border-radius: 50%;background: #fefefe;border: 2px solid #f3c912;box-shadow: 0 0 4px #ddd;transition: all 0.15s ease;color: rgba(0, 0, 0, 0.1);}
 .wp-form-select .img-container p{color: #f3b760;font-size: 13px;display: inline-block;margin: 0 5px;font-weight: 600;}
 .wp-form-select .img-container h5{height: inherit;margin-bottom: 5px;text-align: center;color: #283374;font-weight: 600;margin: 10px 5px;}
-.wp-form-select .img-container .select-box{
-    vertical-align: middle;
-    text-align: center;
-    padding: 10px;
-    border-top: 1px solid #e6e6e6;
-}
+.wp-form-select .img-container .select-box{vertical-align: middle;text-align: center;padding: 10px;border-top: 1px solid #e6e6e6;}
 .wp-form-select img{width: 100%;border-radius: 3px;}
 .wp-form-select .img-container:hover{}
 input[type=checkbox]:checked ~ .img-container{}
@@ -85,29 +80,17 @@ td.red{color: red !important;}
 .table-col-3{width: 150px !important;}
 .table-col-5{width: 250px !important;}
 
-
+.circle-win{width: 85% !important;top: 22%;}
 .carousel-inner>.item{height: inherit;width: inherit;padding: 0 10px;}
-.carousel-control.left,.carousel-control.right{
-    background: transparent;
-}
-.carousel-inner>.next, .carousel-inner>.prev{
-	top:0px;
-}
-.p-term{
-    font-size: 12px !important;
-    padding: 5px 5px 5px 12px;
-    margin-left: 5px;
-    margin-bottom: 0;
-    text-align: left;
-}
-.p-term li{
-    line-height: 1em;
-    margin-bottom: 3px;
-}
+.carousel-control.left,.carousel-control.right{background: transparent;}
+.carousel-inner>.next, .carousel-inner>.prev{top:0px;}
+.p-term{font-size: 12px !important;padding: 5px 5px 5px 12px;margin-left: 5px;margin-bottom: 0;text-align: left;}
+.p-term li{line-height: 1em;margin-bottom: 3px;}
 .redeem-gift-r h4{}
 .redeem-gift-r .p-desc{}
 .redeem-gift-btn{}
 .redeem-gift-btn .p-desc{font-size: 12px;margin-bottom: 0;}
+.p-win{font-size: 14px !important;line-height: 1.5em !important;}
 
 
 @media screen and (min-width: 768px) {

@@ -48,39 +48,4 @@
         })
 
 
-        function scaleCaptcha(elementWidth) {
-
-          var reCaptchaWidth = 304;
-            var containerWidth = $('.capcha-container').width();
-
-          if(reCaptchaWidth > containerWidth) {
-            var captchaScale = containerWidth / reCaptchaWidth;
-
-            $('.g-recaptcha').css({
-              'transform':'scale('+captchaScale+')'
-            });
-          }
-        }
-
-
-        function checkRecaptcha() {
-            res = $('#g-recaptcha-response').val();
-            if (res == "" || res == undefined || res.length == 0)
-                return false;
-            else
-                return true;
-
-        }
-
-        scaleCaptcha();
-        $(window).resize( $.throttle( 100, scaleCaptcha ) );
-
-        //$('#redeeem_form').submit(function(e) {
-        //    if(!checkRecaptcha()) {
-        //        $( "#frm-wp-result2" ).addClass('test');
-        //        return false;
-        //    }
-        //});
-
-
-});s
+});

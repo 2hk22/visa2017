@@ -1,5 +1,6 @@
 <?php include '../Cores/Settings.php'; ?>
 <?php include '../Cores/template/header_public.php' ?>
+<?php include 'captcha.php'; ?>
 
 
 <div class="bg-white animated fadeIn" style="min-height: 75vh">
@@ -268,14 +269,12 @@
                                 <option value="Zimbabwe">Zimbabwe</option>
                             </select>
                         </div>
-                        <div class="form-group text-center">
-                        <div class="captchaContainer capcha-container">
-                            <div id="recaptcha" class="g-recaptcha"></div>
-                            <small class="help-block capcha" id="frm-wp-result">Please Recapcha</small>
-                            </div>
+                        <div class="form-group">
+                            <label for="merchant_code"><img src="<?php echo Captcha::createCaptcha(); ?>" class="capcha-img" /></label>
+                            <input class="form-control" type="text" id="captcha" name="captcha" >
                         </div>
-                        <div class="form-group margin-0">
-                            <button class="btn btn-sm btn-block btn-primary" type="submit">Register</button>
+                        <div class="form-group">
+                            <button class="btn btn-sm btn-block btn-primary" type="submit">Get offer</button>
                         </div>
                     </form>
                     <!-- END Lucky Register Form -->

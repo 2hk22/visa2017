@@ -1,9 +1,9 @@
 <?php
     class Captcha{
     public static function createCaptcha(){
-		$code=rand(1000,9999);
+		$code=rand(1000,99999);
 		$_SESSION["code"]=$code;
-		$im = imagecreatetruecolor(45, 24);
+		$im = imagecreatetruecolor(53, 24);
 		$bg = imagecolorallocate($im, 45, 50, 150);
 		$fg = imagecolorallocate($im, 255, 255, 255);
 		imagefill($im, 0, 0, $bg);
@@ -18,3 +18,4 @@
     return $dataUri;
 	}}
 ?>
+
