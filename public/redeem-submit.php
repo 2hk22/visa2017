@@ -14,142 +14,189 @@ jQuery(function(){
 
     try
     {
+        if(isset($_POST["captcha"]) && $_POST["captcha"]!="" && $_SESSION["code"]==$_POST["captcha"])
+        {
+            $encode_captcha = htmlspecialchars($_POST["captcha"], ENT_QUOTES);
+            if($encode_captcha !== htmlspecialchars($encode_captcha)) // Detect Fucking Hacker
+            {
+                header('Location:oops.php', true, 302);
+                exit;
+            }
+        }
+        else
+        {header('Location:oops.php', true, 302); exit;}
+
 
         if(!empty($_POST))
-        {
-            $_SESSION['country'] = $_POST['country'];
-            $_SESSION['approval_code'] = $_POST['approval_code'];
-            $_SESSION['merchant_code'] = $_POST['merchant_code'];
-            $_SESSION['spending'] = $_POST['spending'];
+        {   
+            $encode_country = htmlspecialchars($_POST['country'], ENT_QUOTES);
+            $encode_approval_code = htmlspecialchars($_POST['approval_code'], ENT_QUOTES);
+            $encode_merchant_code = htmlspecialchars($_POST['merchant_code'], ENT_QUOTES);
+            $encode_spending = htmlspecialchars($_POST['spending'], ENT_QUOTES);
 
-            if($_SESSION['country'] == 'Thailand')
+            
+
+            
+            if($encode_country !== htmlspecialchars($encode_country)) // Detect Fucking Hacker
             {
                 header('Location:oops.php', true, 302);
                 exit;
             }
-            elseif($_SESSION['merchant_code'] === null)
+            elseif($encode_approval_code !== htmlspecialchars($encode_approval_code))
             {
                 header('Location:oops.php', true, 302);
                 exit;
             }
-            elseif($_SESSION['spending'] < 1000)
+            elseif($encode_merchant_code !== htmlspecialchars($encode_merchant_code))
             {
                 header('Location:oops.php', true, 302);
                 exit;
             }
-            else //Whitelist
+            elseif($encode_spending !== htmlspecialchars($encode_spending))
             {
-
-                $sql = 'SELECT
-                            *,
-                            mr.id member_redeem_id,
-                            r.id redeem_id
-                        FROM
-                                `members_redeems` mr
-                            INNER JOIN `redeems` r ON mr.redeem_id = r.id
-                        WHERE
-                            approval_code LIKE :approval_code';
-                $stmt = $db->prepare($sql);
-                $stmt->bindParam(':approval_code', $_POST['approval_code']);
-                $stmt->execute();
-                $mr = $stmt->fetch();
-
-                if ($mr['approval_code'] == $_POST['approval_code']) {
-                    echo "
-                        <div class='modals redeem-modals'>
-                            <div class='modals-warp animated bounceInDown'>
-                                <h1 class='push-30-t'>You already have <br class='visible-xs'> this privilege.</h1>
-                                <button class='btn btn-block btn-closes btn-primary'>View Your Privilege</button>
-                            </div>
-                        </div>
-                        ";
-                 }
-                if(!empty($mr))
+                header('Location:oops.php', true, 302);
+                exit;
+            }
+            else // Form is collected,Thank For Post
                 {
-                    $mr['state'] = 'ready';
+                if($encode_country == 'Thailand')
+                {
+                    header('Location:oops.php', true, 302);
+                    exit;
                 }
-                else
+                elseif($encode_merchant_code === null)
                 {
-                    //random algorithm
-                    $sql = 'SELECT
-                                *
-                            FROM
-                                `redeems`
-                            WHERE
-                                merchant_code LIKE :merchant_code AND
-                                amount > 0  AND
-                                allocate_now > 0  AND
-                                crireria < :spending';
-                    $stmt = $db->prepare($sql);
-                    $stmt->bindParam(':merchant_code', $_POST['merchant_code']);
-                    $stmt->bindParam(':spending', $_POST['spending']);
-                    $stmt->execute();
-                    $redeems = $stmt->fetchAll();
-                    $ran = rand(0, sizeof($redeems)-1);
-
-                    $sql = 'SELECT
-                                *
-                            FROM
-                                `members_redeems`
-                            WHERE
-                                redeem_id LIKE :redeem_id';
-                    $stmt = $db->prepare($sql);
-
-                    $stmt->bindParam(':redeem_id', $redeems[$ran]['id']);
-                    $stmt->execute();
-                    $members_redeems = $stmt->fetchAll();
-
-                    $sql = 'INSERT INTO
-                                `members_redeems`(
-                                    `id`,
-                                    `redeem_id`,
-                                    `spending`,
-                                    `approval_code`
-                                )
-                            VALUES (
-                                :id,
-                                :redeem_id,
-                                :spending,
-                                :approval_code
-                            )';
-                    $stmt = $db->prepare($sql);
-                    $stmt->bindParam(':id', $id);
-                    $stmt->bindParam(':redeem_id', $redeems[$ran]['id']);
-                    $stmt->bindParam(':spending', $_POST['spending']);
-                    $stmt->bindParam(':approval_code', $_POST['approval_code']);
-                    $stmt->execute();
-
-                    $sql = 'UPDATE
-                                `redeems`
-                            SET
-                                `amount` = `amount` + :quantity,
-                                `allocate_now` = `allocate_now` + :quantity
-                            WHERE
-                                id = :redeem_id';
-                    $stmt = $db->prepare($sql);
-                    $temp = -1;
-                    $stmt->bindParam(':redeem_id', $redeems[$ran]['id']);
-                    $stmt->bindParam(':quantity', $temp);
-                    $stmt->execute();
-
+                    header('Location:oops.php', true, 302);
+                    exit;
+                }
+                elseif($encode_spending < 1000)
+                {
+                    header('Location:oops.php', true, 302);
+                    exit;
+                }
+                else //Whitelist
+                {
                     $sql = 'SELECT
                                 *,
                                 mr.id member_redeem_id,
                                 r.id redeem_id
                             FROM
-                                `members_redeems` mr
+                                    `members_redeems` mr
                                 INNER JOIN `redeems` r ON mr.redeem_id = r.id
                             WHERE
                                 approval_code LIKE :approval_code';
                     $stmt = $db->prepare($sql);
-                    $stmt->bindParam(':approval_code', $_POST['approval_code']);
+                    $stmt->bindParam(':approval_code', $encode_approval_code);
                     $stmt->execute();
                     $mr = $stmt->fetch();
-                    $mr['state'] = 'new';
-                }
+                    if ($mr['approval_code'] == $encode_approval_code) {
+                        echo "
+                            <div class='modals redeem-modals'>
+                                <div class='modals-warp animated bounceInDown'>
+                                    <h1 class='push-30-t'>You already have <br class='visible-xs'> this privilege.</h1>
+                                    <button class='btn btn-block btn-closes btn-primary'>View Your Privilege</button>
+                                </div>
+                            </div>
+                            ";
+                    }
+                    if(!empty($mr))
+                    {
+                        $mr['state'] = 'ready';
+                    }
+                    else
+                    {
+                        $sql = 'SELECT
+                                    *
+                                FROM `redeems` ';
+                        $stmt = $db->prepare($sql);
+                        $stmt->execute();
+                        $mr = $stmt->fetch();
+                        if($mr['allocate_now'] == 0) // Stock is Empty!
+                        {
+                            header('Location:winprize.php', true, 302);
+                            exit;
+                        }
+                        //random algorithm
+                        $sql = 'SELECT
+                                    *
+                                FROM
+                                    `redeems`
+                                WHERE
+                                    merchant_code LIKE :merchant_code AND
+                                    amount > 0  AND
+                                    allocate_now > 0  AND
+                                    crireria < :spending';
+                        $stmt = $db->prepare($sql);
+                        $stmt->bindParam(':merchant_code', $encode_merchant_code);
+                        $stmt->bindParam(':spending', $encode_spending);
+                        $stmt->execute();
+                        $redeems = $stmt->fetchAll();
+                        $ran = rand(0, sizeof($redeems)-1);
 
-                $_SESSION['redeem'] = $mr;
-           }
+                        $sql = 'SELECT
+                                    *
+                                FROM
+                                    `members_redeems`
+                                WHERE
+                                    redeem_id LIKE :redeem_id';
+                        $stmt = $db->prepare($sql);
+
+                        $stmt->bindParam(':redeem_id', $redeems[$ran]['id']);
+                        $stmt->execute();
+                        $members_redeems = $stmt->fetchAll();
+
+                        $sql = 'INSERT INTO
+                                    `members_redeems`(
+                                        `id`,
+                                        `redeem_id`,
+                                        `spending`,
+                                        `approval_code`
+                                    )
+                                VALUES (
+                                    :id,
+                                    :redeem_id,
+                                    :spending,
+                                    :approval_code
+                                )';
+                        $stmt = $db->prepare($sql);
+                        $stmt->bindParam(':id', $id);
+                        $stmt->bindParam(':redeem_id', $redeems[$ran]['id']);
+                        $stmt->bindParam(':spending', $encode_spending);
+                        $stmt->bindParam(':approval_code', $encode_approval_code);
+                        $stmt->execute();
+
+                        $sql = 'UPDATE
+                                    `redeems`
+                                SET
+                                    `amount` = `amount` + :quantity,
+                                    `allocate_now` = `allocate_now` + :quantity
+                                WHERE
+                                    id = :redeem_id';
+                        $stmt = $db->prepare($sql);
+                        $temp = -1;
+                        $stmt->bindParam(':redeem_id', $redeems[$ran]['id']);
+                        $stmt->bindParam(':quantity', $temp);
+                        $stmt->execute();
+
+                        $sql = 'SELECT
+                                    *,
+                                    mr.id member_redeem_id,
+                                    r.id redeem_id
+                                FROM
+                                    `members_redeems` mr
+                                    INNER JOIN `redeems` r ON mr.redeem_id = r.id
+                                WHERE
+                                    approval_code LIKE :approval_code';
+                        $stmt = $db->prepare($sql);
+                        $stmt->bindParam(':approval_code', $encode_approval_code);
+                        $stmt->execute();
+                        $mr = $stmt->fetch();
+                        $mr['state'] = 'new';
+                    }
+
+                    $_SESSION['redeem'] = $mr;
+                }
+            }
         }
         else
         {
@@ -187,11 +234,11 @@ jQuery(function(){
                                 <img src="http://via.placeholder.com/150x150" alt="">
                             </div>
                             <div class="col-md-8 redeem-gift-r">
-                                <h3><?php echo $mr['item']; ?></h3>
-                                <h5><?php echo $mr['merchant_code'].'-'.$padded.'-'.$mr["member_redeem_id"]?></h5>
+                                <h3><?php echo htmlspecialchars($mr['item']); ?></h3>
+                                <h5><?php echo htmlspecialchars($mr['merchant_code']).'-'.$padded.'-'.htmlspecialchars($mr["member_redeem_id"])?></h5>
                                 <p class="push-10-t p-label">Please redeem in</p>
-                                <h5><?php echo $dateConvers; ?></h5>
-                                <p class="p-desc">Present this message screen with your Visa Sale slip at <?php echo $mr['description']?>to get<?php echo $mr['item']; ?></p>
+                                <h5><?php echo htmlspecialchars($dateConvers); ?></h5>
+                                <p class="p-desc">Present this message screen with your Visa Sale slip at <?php echo htmlspecialchars($mr['description'])?>to get<?php echo $mr['item']; ?></p>
                             </div>
                         </div>
                         <div class="col-xs-12 col-md-offset-1 text-left redeem-gift-term">

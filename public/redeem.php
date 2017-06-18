@@ -311,10 +311,10 @@
                             <input class="form-control" type="text" id="merchant_code" name="merchant_code" value="<?php echo $_GET['merchant_code']; ?>" required readonly/>
                         </div>
                         <div class="form-group text-center margin-0">
-                        <div class="capcha-container">
-                            <div class="g-recaptcha" data-sitekey="6Lc5UiUUAAAAAOHyx5xE-k6QmgY1pxxfdi1xl-vC" id="g-recaptcha-response2" ></div>
-                            <small class="help-block capcha" id="frm-wp-result2">Please Recapcha</small>
-                            </div>
+                        <div class="capcha-container" style="padding:15px;margin:0 auto;">
+                            Enter Image Text
+                            <input class="form-control" type="text" id="captcha" name="captcha" >
+                            <img src="captcha.php" /><br>
                         </div>
                         <div class="form-group">
                             <div class="row">
