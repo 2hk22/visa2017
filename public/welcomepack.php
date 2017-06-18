@@ -13,7 +13,7 @@
                     </div>
 
                     <!-- Lucky Register Form -->
-                    <form class="form-horizontal push-30-t" id="wp_form" action="welcomepack-submit.php" method="POST">
+                    <form class="form-horizontal push-30-t" id="wp_form" action="welcomepack-select.php" method="POST">
                         <div class="form-group">
                             <label for="country">Rescident of Country</label>
                             <select class="form-control" id="country" name="country" required>
