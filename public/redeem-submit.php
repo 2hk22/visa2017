@@ -1,13 +1,6 @@
 <?php include '../Cores/Settings.php'; ?>
 <?php include '../Cores/template/header_public.php' ?>
 
-<script>
-jQuery(function(){
-    $('.btn-closes').click(function(){
-        $('.redeem-modals,.btn-closes').addClass("none");
-    });
-});
-</script>
 
 <?php
     $db = Settings::database();
@@ -59,7 +52,7 @@ jQuery(function(){
                     }
                     else // Form is collected,Thank For Post
                         {
-                        if($encode_country == 'Thailand')
+                        if($encode_country == 'Thailand')// if thailand redirect to winprize page
                         {
                             header('Location:winprize.php', true, 302);
                             exit;
@@ -131,6 +124,13 @@ jQuery(function(){
                                 $stmt->bindParam(':spending', $encode_spending);
                                 $stmt->execute();
                                 $redeems = $stmt->fetchAll();
+
+                                if(empty($redeems)) // Stock is Empty!
+                                {
+                                    header('Location:winprize.php', true, 302);
+                                    exit;
+                                }
+
                                 $ran = rand(0, sizeof($redeems)-1);
 
                                 $sql = 'SELECT
@@ -150,19 +150,22 @@ jQuery(function(){
                                                 `id`,
                                                 `redeem_id`,
                                                 `spending`,
-                                                `approval_code`
+                                                `approval_code`,
+                                                `country`
                                             )
                                         VALUES (
                                             :id,
                                             :redeem_id,
                                             :spending,
-                                            :approval_code
+                                            :approval_code,
+                                            :country
                                         )';
                                 $stmt = $db->prepare($sql);
                                 $stmt->bindParam(':id', $id);
                                 $stmt->bindParam(':redeem_id', $redeems[$ran]['id']);
                                 $stmt->bindParam(':spending', $encode_spending);
                                 $stmt->bindParam(':approval_code', $encode_approval_code);
+                                $stmt->bindParam(':country', $encode_country);
                                 $stmt->execute();
 
                                 $sql = 'UPDATE
@@ -191,6 +194,7 @@ jQuery(function(){
                                 $stmt->bindParam(':approval_code', $encode_approval_code);
                                 $stmt->execute();
                                 $mr = $stmt->fetch();
+                                //var_dump($mr);
                                 $mr['state'] = 'new';
                             }
 
@@ -255,11 +259,15 @@ jQuery(function(){
                     </div>
                     <div class="form-group">
                         <div class="row push-10-t text-center">
-                            <h5>Entitle a chance to win <br class="visible-xs">“A Trip to Thailand” <br class="visible-xs">grand prize package here!</h5>
+                            <h5 id="save_text">Please Capture Screen All Coupon <br class='visible-xs'>in Your Pack For Redemption.</h5>
+                            <h5 id="simply_text">Entitle a chance to win <br class="visible-xs">“A Trip to Thailand” <br class="visible-xs">grand prize package here!</h5>
                             <a href="https://www.visa-promotions.com/mepa/tgs">
                                 <button class="btn btn-sm btn-block btn-primary">Simply click</button>
                             </a>
                         </div>
+                    </div>
+                    <div class="form-group redeem-gift-btn redeem-gift-save redeem-gift-save2 none" id="save_image_container">
+                        <button class="btn btn-sm btn-block btn-primary btn-p-5" id="save_image">Save</button>
                     </div>
                 </div>
             </div>
@@ -267,7 +275,63 @@ jQuery(function(){
     </div>
 </div>
 
+<div class='modals redeem-modals2 none' id="is-notChrome">
+    <div class='modals-warp animated bounceInDown'>
+        <h1 class='push-30-t'>Please Capture Screen<br class='visible-xs'>All Coupon in Your Pack<br class='visible-xs'>For Redemption.</h1>
+        <button class='btn btn-block btn-closes2 btn-primary'>Get Start</button>
+    </div>
+</div>
 
 <?php //var_dump($mr) ?>
 
 <?php include '../Cores/template/footer_public.php' ?>
+
+<script>
+
+$( function() {
+    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    if (isChrome) {
+        $("#save_image_container").removeClass('none')
+        $('#simply_text').hide()
+        console.log('helppp')
+    }else{
+        $("#is-notChrome").removeClass('none')
+        $('#save_text').hide()
+    }
+});
+
+$('.btn-closes').click(function(){
+    $('.redeem-modals,.btn-closes').addClass("none");
+});
+
+
+document.querySelector('#save_image').addEventListener('click', function() {
+    html2canvas(document.querySelector('body'), {
+        onrendered: function(canvas) {
+            // document.body.appendChild(canvas);
+
+          return Canvas2Image.saveAsJPEG(canvas);
+        }
+    });
+});
+
+$("#save_image").click(function() {
+    setTimeout(function() {
+        $("#save_image").fadeOut( "slow" )
+        $("#save_text").fadeOut( "slow" )
+        $("#simply_text").fadeIn( "slow" )
+    },600);
+});
+
+</script>
+
+<script>
+jQuery(function(){
+    $('.btn-closes').click(function(){
+        $('.redeem-modals,.btn-closes').addClass("none");
+    });
+    $('.btn-closes2').click(function(){
+        $('.redeem-modals2,.btn-closes2').addClass("none");
+    });
+});
+</script>

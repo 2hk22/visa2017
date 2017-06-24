@@ -2,7 +2,7 @@
   ob_start();?>
 <!DOCTYPE html>
 <!--[if IE 9]>         <html class="ie9 no-focus" lang="en"> <![endif]-->
-<!--[if gt IE 9]><!--> <html class="no-focus" lang="en"> <!--<![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-focus" lang="en" id="imagesave"> <!--<![endif]-->
     <head>
         <meta charset="utf-8">
 
@@ -64,7 +64,10 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js"></script>
         <script src="<?php echo Settings::full_url(); ?>/assets/js/plugins/formValidation/formValidation.min.js"></script>
         <script src="<?php echo Settings::full_url(); ?>/assets/js/plugins/formValidation/bootstrap.min.js"></script>
-        <script src="<?php echo Settings::full_url(); ?>/assets/js/plugins/reCaptcha2/reCaptcha2.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-alpha1/html2canvas.min.js"></script>
+        <script src="<?php echo Settings::full_url(); ?>/assets/js/plugins/html2canvas/canvas2image.js"></script>
+
         <!-- <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script> -->
 
 

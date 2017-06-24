@@ -9,14 +9,13 @@
             <div class="col-sm-12 col-md-8 col-md-offset-2">
                 <div class="push-100-t">
                     <div class="text-center">
-                        <h1 class="push-30-t">Get Welcome Pack</h1>
-                        <p  class="push-10-t">First time welcome.</p>
+                        <h1 class="push-30-t">Greeting you with Thailand Grand Sale</h1>
                     </div>
 
                     <!-- Lucky Register Form -->
-                    <form class="form-horizontal push-30-t" id="wp_form" action="welcomepack-select.php" method="POST">
+                    <form class="form-horizontal push-30-t" id="wp_form" action="welcomepack-select.php" method="POST" autocomplete="off">
                         <div class="form-group">
-                            <label for="country">Rescident of Country</label>
+                            <label for="country">Country of residence</label>
                             <select class="form-control" id="country" name="country" required>
                                 <option value="">Please Select Country</option>
                                 <option value="Afganistan">Afghanistan</option>
@@ -270,8 +269,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="merchant_code"><img src="<?php echo Captcha::createCaptcha(); ?>" class="capcha-img" /></label>
-                            <input class="form-control" type="text" id="captcha" name="captcha" >
+                            <label for="merchant_code">Verification Key <img src="<?php echo Captcha::createCaptcha(); ?>" class="capcha-img" /></label>
+                            <input class="form-control" type="text" id="captcha" name="captcha" placeholder="Enter Capcha.." >
                         </div>
                         <div class="form-group">
                             <button class="btn btn-sm btn-block btn-primary" type="submit">Get offer</button>

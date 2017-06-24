@@ -14,7 +14,7 @@
                             </div>
                             </div>
                             <div class="col-md-8 redeem-gift-r">
-                                <p class="p-win p-desc">Win “A Trip to Thailand” <br class="visible-xs"> grand prize package Airline tickets and Hotel Accommodation<br class="visible-xs">(maximum 7 nights) for 2 persons Total 10 prizes</p>
+                                <p class="p-win p-desc">Win “A Trip to Thailand” <br class="visible-xs"> grand prize package :Airline tickets and Hotel Accommodation<br class="visible-xs">(maximum 7 nights) for 2 persons Total 10 prizes</p>
                             </div>
                         </div>
                     </div>

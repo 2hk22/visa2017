@@ -45,7 +45,7 @@
                 }
                 else
                 {
-                    //setcookie('already', 1, time() + (86400 * 30));
+
                     $_SESSION['country'] = $encode_country;
 
                 }
@@ -77,7 +77,7 @@
                     </div>
 
                     <!-- Lucky Register Form -->
-                    <form class="form-horizontal push-10-t" id="wp_form" action="welcomepack-submit.php" method="POST">
+                    <form class="form-horizontal push-10-t" id="wp_form" action="welcomepack-submit.php" method="POST" autocomplete="off">
                         <div class="form-group text-center margin-0">
                             <div class="col-sm-12 col-md-4">
                                 <label class="checkbox-inline wp-form-select">

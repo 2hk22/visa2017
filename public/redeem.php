@@ -314,8 +314,8 @@
                             <input class="form-control" type="text" id="merchant_code" name="merchant_code" value="<?php echo $_GET['merchant_code']; ?>" required readonly/>
                         </div>
                         <div class="form-group">
-                            <label for="merchant_code"><img src="<?php echo Captcha::createCaptcha(); ?>" class="capcha-img" /></label>
-                            <input class="form-control" type="text" id="captcha" name="captcha" >
+                            <label for="merchant_code">Verification Key <img src="<?php echo Captcha::createCaptcha(); ?>" class="capcha-img" /></label>
+                            <input class="form-control" type="text" id="captcha" name="captcha" placeholder="Enter Capcha.." >
                         </div>
                         <div class="form-group">
                             <div class="row">
