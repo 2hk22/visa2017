@@ -30,6 +30,15 @@
             exit;
         }
 
+        
+        if (empty($_SESSION['token'])) {
+            if (function_exists('mcrypt_create_iv')) {
+                $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+            } else {
+                $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+            }
+        }
+        $token = $_SESSION['token'];
     }
 ?>
 
@@ -322,6 +331,7 @@
                                 <button class="btn btn-sm btn-block btn-primary" type="submit">Get offer</button>
                             </div>
                         </div>
+                        <input type="hidden" name="token" value="<?php echo $token; ?>" />
                     </form>
                     <!-- END Login Form -->
                 </div>

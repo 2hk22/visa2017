@@ -3,9 +3,9 @@
     class Settings{
         public static function database(){
             $hostname = 'localhost';
-            $dbName = 'visa2017';
-            $username = 'root';
-            $password = '';
+            $dbName = 'purichco_tgssys';
+            $username = 'purichco_tgssys';
+            $password = 'tyubLhZGn';
 
 
 

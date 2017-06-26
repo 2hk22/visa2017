@@ -3,153 +3,165 @@
 
 <?php
     $db = Settings::database();
-    function RemoveSimbols($var) {
-                $var = htmlentities($var, ENT_NOQUOTES, 'UTF-8');
+    function Encode($var) {
+                $var = htmlentities(htmlentities($var, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8');
                 $var = preg_replace('/[^\p{L}\p{N}\s]/u', '', $var);
                 return $var;
     }
-    try
-    {
-        if(!empty($_SESSION['country']))
-        {
-                if(isset($_COOKIE['already'])) {
-                    header('Location: already.php', true, 302);
-                    exit;
-                }
-                elseif(!empty($_POST['wp_check'])) {
-                    $wp_check = $_POST['wp_check'];
-                    for($i = 0; $i < sizeof($wp_check);$i++)
-                    {
-                        $encode_wp_check[$i] = htmlspecialchars($wp_check[$i], ENT_QUOTES);
-                        if($encode_wp_check[$i] !== htmlspecialchars($encode_wp_check[$i]) || $encode_wp_check[$i] !== RemoveSimbols($encode_wp_check[$i]))
-                        {
-                            header('Location:oops.php', true, 302);
+    function Encode2($var) {
+                $var = htmlentities(htmlentities($var, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8');
+                return $var;
+    }
+    if (!empty($_POST['token'])) {
+        if (hash_equals($_SESSION['token'], $_POST['token'])) {
+            try
+            {
+                if(!empty($_SESSION['country']))
+                {
+                        if(isset($_COOKIE['already'])) {
+                            header('Location: already.php', true, 302);
                             exit;
                         }
-                        //Grab is Choose
-                        else if($encode_wp_check[$i] == 1){
-                                //Query GrabCoupons
-                                $sql = 'SELECT
-                                    *
-                                FROM
-                                    `grab_coupons`
-                                WHERE
-                                    `status` = 1
-                                LIMIT 1';
-                                $stmt = $db->prepare($sql);
-                                $stmt->execute();
-                                $grabcoupon = $stmt->fetch();
-
-                                //Decrement GrabCoupons
-                                $sql = 'UPDATE
-                                        `grab_coupons`
-                                        SET
-                                            `status` = 0
+                        elseif(!empty($_POST['wp_check'])) {
+                            $wp_check = $_POST['wp_check'];
+                            for($i = 0; $i < sizeof($wp_check);$i++)
+                            {
+                                $encode_wp_check[$i] = Encode($wp_check[$i]);
+                                if(strlen($wp_check[$i]) !== strlen($encode_wp_check[$i]))
+                                {
+                                    header('Location:oops.php', true, 302);
+                                    exit;
+                                }
+                                //Grab is Choose
+                                else if($encode_wp_check[$i] == 1){
+                                        //Query GrabCoupons
+                                        $sql = 'SELECT
+                                            *
+                                        FROM
+                                            `grab_coupons`
                                         WHERE
-                                            id = :grabcoupon_id';
+                                            `status` = 1
+                                        LIMIT 1';
+                                        $stmt = $db->prepare($sql);
+                                        $stmt->execute();
+                                        $grabcoupon = $stmt->fetch();
+
+                                        //Decrement GrabCoupons
+                                        $sql = 'UPDATE
+                                                `grab_coupons`
+                                                SET
+                                                    `status` = 0
+                                                WHERE
+                                                    id = :grabcoupon_id';
+                                        $stmt = $db->prepare($sql);
+                                        $stmt->bindParam(':grabcoupon_id', $grabcoupon['id']);
+                                        $stmt->execute();
+                                }
+                            $check = '"'.implode('", "',$encode_wp_check).'"';
+                            }
+
+                            //Check Empty Grab Coupon
+                            if (strpos($check, '1') !== false) {
+                                if($grabcoupon['id'] == Null){
+                                    $check = substr($check,5);
+                                }
+                            }
+
+                            if (strpos($check, '2') == false && strpos($check, '3') == false) {
+                                if($grabcoupon['id'] == Null){
+                                    header('Location: winprize.php', true, 302);exit;
+                                }
+                            }
+
+                            $sql = 'SELECT
+                                        *
+                                    FROM
+                                        `welcomepacks`
+                                    WHERE
+                                        `limits` > 0 AND
+                                        `allocate_now`> 0 AND
+                                        `id` IN (' . $check . ') ';
+                            $stmt = $db->prepare($sql);
+                            $stmt->execute();
+                            $welcomepacks = $stmt->fetchAll();
+                            $a_count = sizeof($welcomepacks)-1;
+                            $count = sizeof($welcomepacks);
+                            //var_dump($welcomepacks);
+
+                            for( $i=0; $i <=$a_count; $i++) {
+
+                                //Add wp History
+                                $sql = 'INSERT INTO
+                                        `welcomepacks_registers`(
+                                            `country`,
+                                            `welcomepack_id`
+                                            )
+                                        VALUES (
+                                        :country,
+                                        :welcomepack_id
+                                        )';
                                 $stmt = $db->prepare($sql);
-                                $stmt->bindParam(':grabcoupon_id', $grabcoupon['id']);
+                                $stmt->bindParam(':country', $_SESSION['country']);
+                                $stmt->bindParam(':welcomepack_id', $welcomepacks[$i]['id']);
                                 $stmt->execute();
-                        }
-                    $check = '"'.implode('", "',$encode_wp_check).'"';
-                    }
 
-                    //Check Empty Grab Coupon
-                    if (strpos($check, '1') !== false) {
-                        if($grabcoupon['id'] == Null){
-                            $check = substr($check,5);
-                        }
-                    }
+                                //Decrement Stock
+                                $sql = 'UPDATE
+                                        `welcomepacks`
+                                        SET
+                                            `limits` = `limits` + :quantity,
+                                            `allocate_now` = `allocate_now` + :quantity
+                                        WHERE
+                                            id = :welcomepack_id';
+                                $stmt = $db->prepare($sql);
+                                $temp = -1;//dev=0;prod=-1
+                                $stmt->bindParam(':welcomepack_id', $welcomepacks[$i]['id']);
+                                $stmt->bindParam(':quantity', $temp);
+                                $stmt->execute();
 
-                    if (strpos($check, '2') == false && strpos($check, '3') == false) {
-                        if($grabcoupon['id'] == Null){
+                            }
+                        }
+                        else {
+                            header('Location:oops.php', true, 302); exit;
+                        }
+                        //Query Redeem List
+                        $sql = "SELECT
+                                *
+                                FROM
+                                    `welcomepacks` wp
+                                INNER JOIN `welcomepacks_registers` wpr ON wp.id = wpr.welcomepack_id
+                                ORDER BY wpr.id DESC LIMIT ".$count;
+
+                        $stmt = $db->prepare($sql);
+                        $stmt->bindParam(':welcomepack_id', $welcomepacks[]['id']);
+                        $stmt->execute();
+                        $wp = $stmt->fetchAll();
+                        if(empty($wp)){
                             header('Location: winprize.php', true, 302);exit;
                         }
-                    }
+                        //var_dump($wp);
 
-                    $sql = 'SELECT
-                                *
-                            FROM
-                                `welcomepacks`
-                            WHERE
-                                `limits` > 0 AND
-                                `allocate_now`> 0 AND
-                                `id` IN (' . $check . ') ';
-                    $stmt = $db->prepare($sql);
-                    $stmt->execute();
-                    $welcomepacks = $stmt->fetchAll();
-                    $a_count = sizeof($welcomepacks)-1;
-                    $count = sizeof($welcomepacks);
-                    //var_dump($welcomepacks);
+                        unset($_POST);
 
-                    for( $i=0; $i <=$a_count; $i++) {
+                        setcookie('already', 1, time() + (86400 * 30));//1days
 
-                        //Add wp History
-                        $sql = 'INSERT INTO
-                                `welcomepacks_registers`(
-                                    `country`,
-                                    `welcomepack_id`
-                                    )
-                                VALUES (
-                                :country,
-                                :welcomepack_id
-                                )';
-                        $stmt = $db->prepare($sql);
-                        $stmt->bindParam(':country', $_SESSION['country']);
-                        $stmt->bindParam(':welcomepack_id', $welcomepacks[$i]['id']);
-                        $stmt->execute();
-
-                        //Decrement Stock
-                        $sql = 'UPDATE
-                                `welcomepacks`
-                                SET
-                                    `limits` = `limits` + :quantity,
-                                    `allocate_now` = `allocate_now` + :quantity
-                                WHERE
-                                    id = :welcomepack_id';
-                        $stmt = $db->prepare($sql);
-                        $temp = -1;//dev=0;prod=-1
-                        $stmt->bindParam(':welcomepack_id', $welcomepacks[$i]['id']);
-                        $stmt->bindParam(':quantity', $temp);
-                        $stmt->execute();
-
-                    }
+                }//.if(!empty($_SESSION['country']))
+                else
+                {
+                    header('Location: oops.php', true, 302);
+                    exit;
                 }
-                else {
-                    header('Location:oops.php', true, 302); exit;
-                }
-                //Query Redeem List
-                $sql = "SELECT
-                        *
-                        FROM
-                            `welcomepacks` wp
-                        INNER JOIN `welcomepacks_registers` wpr ON wp.id = wpr.welcomepack_id
-                        ORDER BY wpr.id DESC LIMIT ".$count;
-
-                $stmt = $db->prepare($sql);
-                $stmt->bindParam(':welcomepack_id', $welcomepacks[]['id']);
-                $stmt->execute();
-                $wp = $stmt->fetchAll();
-                if(empty($wp)){
-                    header('Location: winprize.php', true, 302);exit;
-                }
-                //var_dump($wp);
-
-                unset($_POST);
-
-                setcookie('already', 1, time() + (86400 * 30));//1days
-
-        }//.if(!empty($_SESSION['country']))
-        else
-        {
+            }//.try
+            catch (PDOException $e)
+            {
+                echo $e->getMessage();
+            }
+        } else {
             header('Location: oops.php', true, 302);
             exit;
         }
-    }//.try
-    catch (PDOException $e)
-    {
-        echo $e->getMessage();
     }
+    
 
 
     function conversTime($Timestamp) {
@@ -160,7 +172,50 @@
 
     }
 
+    //Encode Output
+    if(!empty($grabcoupon['promocode'])){
+        $clean_promocode = Encode($grabcoupon['promocode']);
+        if(strlen($grabcoupon['promocode']) !== strlen($clean_promocode))
+                    {
+                        header('Location:oops.php', true, 302);
+                        exit;
+        }
+    }
 
+
+    for( $i=0; $i <= $a_count; $i++) {
+        $clean_welcomepack_id = Encode($wp[$i]['welcomepack_id']);
+        $clean_code = Encode($wp[$i]['code']);
+        $clean_id = Encode($wp[$i]['id']);
+        $clean_description = Encode2($wp[$i]['description']);
+        //$clean_term = Encode($wp[$i]['term']);
+        //$clean_name = Encode2($wp[$i]['name']);
+        
+        // Detect Blacklist
+        if(strlen($wp[$i]['welcomepack_id']) !== strlen($clean_welcomepack_id))
+            {
+                header('Location:oops.php', true, 302);
+                exit;
+            }
+                elseif(strlen($wp[$i]['code']) !== strlen($clean_code))
+                    {
+                        header('Location:oops.php', true, 302);
+                        exit;
+                    }
+                        elseif(strlen($wp[$i]['id']) !== strlen($clean_id))
+                        {
+                            header('Location:oops.php', true, 302);
+                            exit;
+                        }
+                            elseif(strlen($wp[$i]['description']) !== strlen($clean_description))
+                            {
+                                header('Location:oops.php', true, 302);
+                                exit;
+                            }
+    }
+    //Congrat! You're Welcome ;}
+    $_SESSION = array();
+    session_destroy();
 ?>
 
 <div class="bg-white animated fadeIn">
@@ -182,16 +237,16 @@
                                         <h5 class="push-10-t">Coupon <?php echo $i+1 ." of ".$count;?></h5>
                                         <div class="col-xs-12 redeem-gift">
                                             <div class="col-md-4 redeem-gift-l">
-                                                <img src="<?php echo Settings::full_url();?>assets/img/upload/w<?php echo htmlspecialchars($wp[$i]['welcomepack_id']).'.jpg';?>" alt="">
+                                                <img src="<?php echo Settings::full_url();?>assets/img/upload/w<?php echo $wp[$i]['welcomepack_id'].'.jpg';?>" alt="">
                                             </div>
                                             <div class="col-md-8 redeem-gift-r">
-                                                <h4><?php echo htmlspecialchars($wp[$i]['name']); ?></h4>
-                                                <?php if ($wp[$i]['code'] == "GAB") {?>
-                                                        <h5 class="push-5-t" style="color:#14b86a;"><?php echo htmlspecialchars($grabcoupon['promocode']); ?></h5>
+                                                <h4><?php echo $wp[$i]['name']; ?></h4>
+                                                <?php if ($wp[$i]['code'] == "GCS") {?>
+                                                        <h5 class="push-5-t" style="color:#14b86a;"><?php echo $grabcoupon['promocode']; ?></h5>
                                                     <?php } else {?>
-                                                        <h5 class="push-5-t"><?php echo htmlspecialchars($wp[$i]['code'].'-'.$wp[$i]['welcomepack_id'].$wp[$i]['id']); ?></h5>
+                                                        <h5 class="push-5-t"><?php echo $wp[$i]['code'].'-'.$wp[$i]['welcomepack_id'].$wp[$i]['id']; ?></h5>
                                                     <?php } ?>
-                                                <p class="p-desc"><?php echo htmlspecialchars($wp[$i]['description']); ?></p>
+                                                <p class="p-desc"><?php echo $wp[$i]['description']; ?></p>
                                             </div>
                                         </div>
                                         <div class="col-xs-12 i5-nopad">
