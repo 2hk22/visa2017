@@ -3,6 +3,13 @@
 
 <?php
     $db = Settings::database();
+    if(empty($_SESSION['admin_id']))
+    {
+        header('Location: index.php', true, 302);
+        exit;
+    }
+    else
+    {
 
         $sql = 'SELECT
                     *
@@ -12,6 +19,7 @@
         $stmt->execute();
         $h = $stmt->fetchAll();
         //var_dump($h);
+    }
 
 ?>
 

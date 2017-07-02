@@ -3,23 +3,42 @@
 
 <?php
     $db = Settings::database();
-
-        function PassEncryption($string, $salt, $Type){ // if Type=0 : Encrypt, if Type=1: Decrypt
-            // employeee $salt=userID
-            $key="MVjxLn5exXYZ2F8A1321";
-            $key=$salt.$key;
-            if(!$Type){ // Encrypt
-                $result=base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $string, MCRYPT_MODE_CBC, md5(md5($key))));
-            }
-            else{
-                if(strlen($string)>20){ // string 2 Decrypt > 20
-                    $result=rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($string), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
-                }else{
-                    $result=$string;
-                }
-            }
-            return $result;
+    function DateTimeDiff($strDateTime1,$strDateTime2)
+        {
+        return (strtotime($strDateTime2) - strtotime($strDateTime1))/  (60  ); // 1 Hour =  60*60
         }
+    //Generate Token Prevent CSRF Attack!
+    if (empty($_SESSION['token'])) {
+                if (function_exists('mcrypt_create_iv')) {
+                        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+                    } else {
+                        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+                    }
+                }
+    $token = $_SESSION['token'];
+    
+    function SendEmail() {
+        $to = "oateerapat@gmail.com";
+        $subject = "Request to Reset Passwords";
+        $link = "http://localhost/visa2017/admin/resetpassword.php?token=";
+        $message = $link.$_SESSION['token'];
+        echo $message;
+        $header = "From:memoryneung@gmail.com \r\n";
+        $retval = mail($to,$subject,$message,$header);
+        if( $retval == true )  
+            {
+            echo "Message sent successfully...";
+            }
+        else
+            {
+            echo "Message could not be sent...";
+            }
+    }
+
+    //Forgot Password? Sent mail to Reset
+    if (isset($_GET['sendmail'])) {
+        SendEmail();
+    }
 
     if(!empty($_POST))
     {
@@ -36,35 +55,80 @@
         $user = $stmt->fetch();
 
         $_SESSION['admin_id'] = $_POST['username'];
-
         $hash = (string)$user['password'];
-        $hashing = (string)(PassEncryption(trim($_POST["password"]), 57, 0));
+        $count = $user['count'];
+        $available = $user['available'];
+        $timestamp = $user['timestamp'];
 
-        $ran = rand(0,10000);
-
-        $sql = 'UPDATE
-                `administrators`
-                    SET
-                    sId = :sId';
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':sId', $ran);
-        $stmt->execute();
-
-        $isLogin = strcmp($hash,$hashing);
-
-        //echo $hash.'***'.$hashing.'***'.$isLogin;
-
-        if($isLogin === 0){
-        header('Location: main.php', true, 302);
-            exit();
+        if ($user['available'] == 0) {
+            echo "<br> Real Test <br>";
+            $t_db= $timestamp;
+            $t_now=date("Y-m-d H:i:s",time());
+            echo $t_db . "<br>";
+            echo $t_now . "<br>";
+            $diff_time2 = DateTimeDiff($t_now,$t_db). "<br>";
+            echo("
+                    <p style='color:red;'>PLS! Waiting Until BlockTime Expired ... Time Left = ".(int)$diff_time2)."</p>
+                " ;
+            if($diff_time2 > 20){
+                $sql = 'UPDATE `administrators` SET `available` = 1  WHERE username LIKE :username';
+                $stmt = $db->prepare($sql);
+                $stmt->bindParam(':username', $_POST['username']);
+                $stmt->execute();
+                header('Location:index.php', true, 302); exit;
+            }
         }
         else{
-            header('Location: oops.php', true, 302);
-            exit();
+        //Verify Password
+            if (password_verify(trim($_POST["password"]),$hash)) {
+                $isLogin = 0;
+            }
+            else {
+            $isLogin = '';
+                if($count < 6) {
+                    echo("
+                        <p style='color:red;'>Wrong ID/Password Round $count,try again</p>
+                    ");
+                    $temp = 1;//dev=0;prod=1
+                    $sql = 'UPDATE `administrators` SET `count` = `count` + :quantity WHERE username LIKE :username';
+                    $stmt = $db->prepare($sql);
+                    $stmt->bindParam(':username', $_POST['username']);
+                    $stmt->bindParam(':quantity', $temp);
+                    $stmt->execute();
+                }
+                else {
+                    $_SESSION['username'] = $_POST['username'];
+                    $sql = 'UPDATE `administrators` SET `available` = 0,`count` = 1  WHERE username LIKE :username';
+                    $stmt = $db->prepare($sql);
+                    $stmt->bindParam(':username', $_POST['username']);
+                    $stmt->execute();
+                }
+            }
+
+            if($isLogin === 0){
+                if (!empty($_POST['token'])) {
+                    if (hash_equals($_SESSION['token'], $_POST['token'])) {
+                        try
+                        {
+                            $sql = 'UPDATE `administrators` SET `count` = 1  WHERE username LIKE :username';
+                            $stmt = $db->prepare($sql);
+                            $stmt->bindParam(':username', $_POST['username']);
+                            $stmt->execute();
+                            header('Location: main.php', true, 302);
+                            exit();
+                        }//try
+                        catch (PDOException $e)
+                        {
+                            echo $e->getMessage();
+                        }
+                    } else {
+                        header('Location:oops.php', true, 302); exit;
+                    }
+                
+                }
+            }
         }
-
-
-   }
+    }
 ?>
 
 <div class="bg-white animated fadeIn">
@@ -91,9 +155,11 @@
                         </div>
                         <div class="form-group push-30-t">
                             <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+                                <a href="index.php?sendmail=true"><button class="btn btn-sm btn-block btn-primary">Password?</button></a>
                                 <button class="btn btn-sm btn-block btn-primary" type="submit">Log in</button>
                             </div>
                         </div>
+                        <input type="hidden" name="token" value="<?php echo $token; ?>" />
                     </form>
                     <!-- END Login Form -->
                 </div>
